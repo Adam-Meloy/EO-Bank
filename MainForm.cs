@@ -94,15 +94,32 @@ namespace EO_Bank
         // Import Character
         private void ImportCharStrip_Click(object sender, EventArgs e)
         {
-            // i assume i put the character info into like, hex, maybe json
-
-            MessageBox.Show("Hello! This doesn't actually do anything yet.");
-
-            // commented out to prevent shenanigans
-            //if (importCharDialog.ShowDialog() == DialogResult.OK)
-            //{
-            //    // commence reading of character file and put it somewhere
-            //}
+            if (importCharDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    CharacterSaveFile import = new(importCharDialog.FileName, Game);
+                    Character selectedCharacter = import.Character;
+                    string selectedGuildName = new string(import.GuildName).Replace("\0", "");
+                    switch (Game)
+                    {
+                        default:
+                        case 1:
+                            MessageBox.Show($"Welcome, { ((EO1Character)selectedCharacter).GetName()} from Guild {selectedGuildName}!");
+                            break;
+                        case 2:
+                            MessageBox.Show($"Welcome, {((EO2Character)selectedCharacter).GetName()} from Guild {selectedGuildName}!");
+                            break;
+                        case 3:
+                            MessageBox.Show($"Welcome, {((EO3Character)selectedCharacter).GetName()} from Guild {selectedGuildName}!");
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("You broke me. Here's how you did it: " + e);
+                }
+            }
         }
 
         // Show Character Status
