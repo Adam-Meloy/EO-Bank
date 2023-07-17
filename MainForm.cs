@@ -10,13 +10,9 @@ namespace EO_Bank
         /// <summary>
         /// Save File
         /// </summary>
-        public EO1SaveFile SaveFile;
-        public DecryptSave Decrypted;
+        public SaveFile SaveFile;
 
-        public MainForm()
-        {
-            InitializeComponent();
-        }
+        public MainForm() { InitializeComponent(); }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -66,12 +62,8 @@ namespace EO_Bank
                         // TODO: Implement EO3 Save Reading
                         break;
                 }
-                Decrypted = new(loadSaveDialog.FileName);
 
                 MessageBox.Show($"Welcome, {SaveFile.GuildName}");
-
-                // debug reasons
-                CharNames.Text = SaveFile.Characters[0].PrintName();
 
                 createSaveStrip.Enabled = true;
                 createDecryptedSaveStrip.Enabled = true;
@@ -83,7 +75,7 @@ namespace EO_Bank
         {
             if (createDecryptedSaveDialog.ShowDialog() == DialogResult.OK)
             {
-                Decrypted.WriteDecryptedSave(createDecryptedSaveDialog.FileName);
+                SaveFile.WriteDecryptedSave(createDecryptedSaveDialog.FileName);
             }
         }
 
@@ -117,8 +109,8 @@ namespace EO_Bank
         private void CharStatus_Click(object sender, EventArgs e)
         {
             MessageBox.Show(
-                $"{SaveFile.Characters[0].PrintName()}\n" +
-                $"Job: {SaveFile.Characters[0].ClassName()}\n" +
+                $"{SaveFile.Characters[0].GetName()}\n" +
+                $"Job: {SaveFile.Characters[0].GetClass()}\n" +
                 $"Level: {SaveFile.Characters[0].Level}\n" +
                 $"Exp: {SaveFile.Characters[0].Exp}"
             );
@@ -131,10 +123,7 @@ namespace EO_Bank
         }
 
         // Exit Program
-        private void Exit_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
+        private void Exit_Click(object sender, EventArgs e) { Application.Exit(); }
 
         private void Menu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) { }
 

@@ -37,9 +37,9 @@ namespace EO_Bank
             fileStrip = new ToolStripMenuItem();
             loadSaveStrip = new ToolStripMenuItem();
             createSaveStrip = new ToolStripMenuItem();
+            createDecryptedSaveStrip = new ToolStripMenuItem();
             settingsStrip = new ToolStripMenuItem();
             exitStrip = new ToolStripMenuItem();
-            createDecryptedSaveStrip = new ToolStripMenuItem();
             characterStrip = new ToolStripMenuItem();
             charStatusStrip = new ToolStripMenuItem();
             exportCharStrip = new ToolStripMenuItem();
@@ -48,7 +48,6 @@ namespace EO_Bank
             loadSaveDialog = new OpenFileDialog();
             importCharDialog = new OpenFileDialog();
             exportCharDialog = new SaveFileDialog();
-            CharNames = new TextBox();
             createDecryptedSaveDialog = new SaveFileDialog();
             menuStrip.SuspendLayout();
             SuspendLayout();
@@ -59,7 +58,8 @@ namespace EO_Bank
             menuStrip.Items.AddRange(new ToolStripItem[] { fileStrip, characterStrip });
             menuStrip.Location = new System.Drawing.Point(0, 0);
             menuStrip.Name = "menuStrip";
-            menuStrip.Size = new System.Drawing.Size(800, 28);
+            menuStrip.Padding = new Padding(5, 2, 0, 2);
+            menuStrip.Size = new System.Drawing.Size(700, 24);
             menuStrip.TabIndex = 0;
             menuStrip.Text = "Menu";
             menuStrip.ItemClicked += Menu_ItemClicked;
@@ -68,69 +68,69 @@ namespace EO_Bank
             // 
             fileStrip.DropDownItems.AddRange(new ToolStripItem[] { loadSaveStrip, createSaveStrip, createDecryptedSaveStrip, settingsStrip, exitStrip });
             fileStrip.Name = "fileStrip";
-            fileStrip.Size = new System.Drawing.Size(46, 24);
+            fileStrip.Size = new System.Drawing.Size(37, 20);
             fileStrip.Text = "File";
             // 
             // loadSaveStrip
             // 
             loadSaveStrip.Name = "loadSaveStrip";
-            loadSaveStrip.Size = new System.Drawing.Size(243, 26);
+            loadSaveStrip.Size = new System.Drawing.Size(192, 22);
             loadSaveStrip.Text = "Load Save";
             loadSaveStrip.Click += LoadSaveStrip_Click;
             // 
             // createSaveStrip
             // 
             createSaveStrip.Name = "createSaveStrip";
-            createSaveStrip.Size = new System.Drawing.Size(243, 26);
+            createSaveStrip.Size = new System.Drawing.Size(192, 22);
             createSaveStrip.Text = "Create Save";
             createSaveStrip.Click += CreateSaveStrip_Click;
+            // 
+            // createDecryptedSaveStrip
+            // 
+            createDecryptedSaveStrip.Name = "createDecryptedSaveStrip";
+            createDecryptedSaveStrip.Size = new System.Drawing.Size(192, 22);
+            createDecryptedSaveStrip.Text = "Create Decrypted Save";
+            createDecryptedSaveStrip.Click += CreateDecryptedSaveStrip_Click;
             // 
             // settingsStrip
             // 
             settingsStrip.Name = "settingsStrip";
-            settingsStrip.Size = new System.Drawing.Size(243, 26);
+            settingsStrip.Size = new System.Drawing.Size(192, 22);
             settingsStrip.Text = "Settings";
             settingsStrip.Click += Settings_Click;
             // 
             // exitStrip
             // 
             exitStrip.Name = "exitStrip";
-            exitStrip.Size = new System.Drawing.Size(243, 26);
+            exitStrip.Size = new System.Drawing.Size(192, 22);
             exitStrip.Text = "Exit";
             exitStrip.Click += Exit_Click;
-            // 
-            // createDecryptedSaveStrip
-            // 
-            createDecryptedSaveStrip.Name = "createDecryptedSaveStrip";
-            createDecryptedSaveStrip.Size = new System.Drawing.Size(243, 26);
-            createDecryptedSaveStrip.Text = "Create Decrypted Save";
-            createDecryptedSaveStrip.Click += CreateDecryptedSaveStrip_Click;
             // 
             // characterStrip
             // 
             characterStrip.DropDownItems.AddRange(new ToolStripItem[] { charStatusStrip, exportCharStrip, importCharStrip });
             characterStrip.Name = "characterStrip";
-            characterStrip.Size = new System.Drawing.Size(86, 24);
+            characterStrip.Size = new System.Drawing.Size(70, 20);
             characterStrip.Text = "Character";
             // 
             // charStatusStrip
             // 
             charStatusStrip.Name = "charStatusStrip";
-            charStatusStrip.Size = new System.Drawing.Size(204, 26);
+            charStatusStrip.Size = new System.Drawing.Size(164, 22);
             charStatusStrip.Text = "Character Status";
             charStatusStrip.Click += CharStatus_Click;
             // 
             // exportCharStrip
             // 
             exportCharStrip.Name = "exportCharStrip";
-            exportCharStrip.Size = new System.Drawing.Size(204, 26);
+            exportCharStrip.Size = new System.Drawing.Size(164, 22);
             exportCharStrip.Text = "Export Character";
             exportCharStrip.Click += ExportCharStrip_Click;
             // 
             // importCharStrip
             // 
             importCharStrip.Name = "importCharStrip";
-            importCharStrip.Size = new System.Drawing.Size(204, 26);
+            importCharStrip.Size = new System.Drawing.Size(164, 22);
             importCharStrip.Text = "Import Character";
             importCharStrip.Click += ImportCharStrip_Click;
             // 
@@ -157,18 +157,6 @@ namespace EO_Bank
             exportCharDialog.Filter = "EO1 Character File (*.eo1char)|*.eo1char";
             exportCharDialog.Title = "Export Character";
             // 
-            // CharNames
-            // 
-            CharNames.BackColor = System.Drawing.SystemColors.ControlLight;
-            CharNames.BorderStyle = BorderStyle.None;
-            CharNames.ImeMode = ImeMode.Disable;
-            CharNames.Location = new System.Drawing.Point(12, 31);
-            CharNames.Multiline = true;
-            CharNames.Name = "CharNames";
-            CharNames.ReadOnly = true;
-            CharNames.Size = new System.Drawing.Size(125, 519);
-            CharNames.TabIndex = 1;
-            // 
             // createDecryptedSaveDialog
             // 
             createDecryptedSaveDialog.CreatePrompt = true;
@@ -178,14 +166,12 @@ namespace EO_Bank
             // MainForm
             // 
             AllowDrop = true;
-            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(800, 562);
-            Controls.Add(CharNames);
+            ClientSize = new System.Drawing.Size(700, 422);
             Controls.Add(menuStrip);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip;
-            Margin = new Padding(3, 4, 3, 4);
             Name = "MainForm";
             Text = "EO Bank";
             Load += Form1_Load;
@@ -211,7 +197,6 @@ namespace EO_Bank
         private OpenFileDialog loadSaveDialog;
         private OpenFileDialog importCharDialog;
         private SaveFileDialog exportCharDialog;
-        private TextBox CharNames;
         private ToolStripMenuItem createDecryptedSaveStrip;
         private SaveFileDialog createDecryptedSaveDialog;
     }

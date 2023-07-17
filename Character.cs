@@ -1,15 +1,37 @@
 ﻿using System.IO;
+using System.Windows.Forms;
 
 namespace EO_Bank
 {
-    public class Character
+    public abstract class Character
     {
+        // Require further investigation before putting shared variables here
+
+        /// <summary>
+        /// Class
+        /// </summary>
+        public abstract int Class { get; set; }
+
+        /// <summary>
+        /// Level
+        /// </summary>
+        public abstract int Level { get; set; }
+
+        /// <summary>
+        /// Experience
+        /// </summary>
+        public abstract uint Exp { get; set; }
+
         public Character() { }
 
-        public static byte[] RebuildBytes()
-        {
-            return null;
-        }
+        /// <summary>
+        /// Get a string version of the Character's Name
+        /// </summary>
+        public abstract string GetName();
+        /// <summary>
+        /// Get a string version of the Character's Class
+        /// </summary>
+        public abstract string GetClass();
     }
 
     public class EO1Character : Character
@@ -17,31 +39,31 @@ namespace EO_Bank
         public struct ABIL_DATA
         {
             /// <summary>
-            /// Character Max HP
+            /// Max HP
             /// </summary>
             public int HpMax;
             /// <summary>
-            /// Character Max TP
+            /// Max TP
             /// </summary>
             public int TpMax;
             /// <summary>
-            /// Character STR
+            /// Strength (STR)
             /// </summary>
             public int Str;
             /// <summary>
-            /// Character VIT
+            /// Vitality (VIT)
             /// </summary>
             public int Vit;
             /// <summary>
-            /// Character AGI
+            /// Agility (AGI)
             /// </summary>
             public int Agi;
             /// <summary>
-            /// Character LUC
+            /// Luck (LUC)
             /// </summary>
             public int Luc;
             /// <summary>
-            /// Character TEC
+            /// Technique (TEC)
             /// </summary>
             public int Tec;
 
@@ -91,85 +113,109 @@ namespace EO_Bank
             }
         }
 
-        /// <summary>
-        /// Character Header?
-        /// </summary>
-        public RESIST_DATA Resist;
+        public struct EQUIP
+        {
+            /// <summary>
+            /// Equipped Weapon
+            /// </summary>
+            public int Weapon;
+            /// <summary>
+            /// Equipped Armor in the first slot
+            /// </summary>
+            public int Armor_1;
+            /// <summary>
+            /// Equipped Armor in the second slot
+            /// </summary>
+            public int Armor_2;
+            /// <summary>
+            /// Equipped Armor in the third slot
+            /// </summary>
+            public int Armor_3;
+
+            public EQUIP() { }
+
+            public EQUIP(BinaryReader input)
+            {
+                Weapon = input.ReadInt32();
+                Armor_1 = input.ReadInt32();
+                Armor_2 = input.ReadInt32();
+                Armor_3 = input.ReadInt32();
+            }
+        }
 
         /// <summary>
-        /// List of Character Equipment
+        /// Element Resist Values
         /// </summary>
-        public int[] Equipment = new int[4];
+        public RESIST_DATA Resist; // Get/Set might break something so left alone
 
         /// <summary>
-        /// Character Base Stats
+        /// List of Equipment
         /// </summary>
-        public ABIL_DATA Natural_Param;
+        public EQUIP Equipment { get; set; }
 
         /// <summary>
-        /// Character Base Stats + Skills + Equipment
+        /// Base Stats
+        /// </summary>
+        public ABIL_DATA Natural_Param { get; set; }
+
+        /// <summary>
+        /// Base Stats + Skills + Equipment
         /// </summary>
         public ABIL_DATA Fortify_Param;
 
         /// <summary>
-        /// Character Current HP
+        /// Current HP
         /// </summary>
-        public int HP;
+        public int HP { get; set; }
 
         /// <summary>
-        /// Character Current TP
+        /// Current TP
         /// </summary>
-        public int TP;
+        public int TP { get; set; }
+
+        public override uint Exp { get; set; }
 
         /// <summary>
-        /// Character Experience
+        /// Name
         /// </summary>
-        public uint Exp;
-
-        /// <summary>
-        /// Character Name
-        /// </summary>
-        public char[] Name;
+        public char[] Name { get; set; }
 
         /// <summary>
         /// Bad Status Effect
         /// </summary>
-        public int BadStatusFg;
+        public int BadStatusFg { get; set; }
 
-        /// <summary>
-        /// Character Level
-        /// </summary>
-        public int Level;
+        public override int Level { get; set; }
 
         /// <summary>
         /// Boost
         /// </summary>
-        public int Boost;
+        public int Boost; // Get/Set might break something so left alone
 
         /// <summary>
-        /// Texture Number Used
+        /// Portrait Number
         /// </summary>
-        public int TexNum;
+        public int TexNum { get; set; }
 
         /// <summary>
-        /// JijikaBit (idk)
+        /// JijikuBit (idk)
         /// </summary>
-        public int JijikaBit;
+        public int JijikuBit; // Get/Set might break something so left alone
 
         /// <summary>
-        /// Character Skill Points
+        /// Skill Points
         /// </summary>
-        public int SP;
+        public int SP { get; set; }
 
         /// <summary>
-        /// Character Skill Levels
+        /// Skill Levels
         /// </summary>
-        public int[] SkillLevel = new int[21];
+        public int[] SkillLevel { get; set; } = new int[21];
 
         /// <summary>
-        /// Character Creation Number (shifts up if previous character is deleted)
+        /// Character Number (shifts up if previous character is deleted)
         /// </summary>
-        public int CharacterNumber;
+        public int CharacterNumber { get; set; }
 
         /// <summary>
         /// Character Base Stats + Skills
@@ -177,45 +223,40 @@ namespace EO_Bank
         public ABIL_DATA Skill_Param;
 
         /// <summary>
-        /// Character Slot Number (0-29)
+        /// Slot Number (0-29)
         /// </summary>
-        public int RegisterIndex;
+        public int RegisterIndex { get; set; }
 
         /// <summary>
-        /// Character Female Flag
+        /// Female Portrait Flag
         /// </summary>
-        public int IsFemale;
+        public int IsFemale { get; set; }
+
+        public override int Class { get; set; }
 
         /// <summary>
-        /// Character Class;
-        /// 0: Landsknecht, 1: Survivalist, 2: Protector, 3: Dark Hunter, 4: Ronin, 5: Medic, 6: Alchemist, 7: Troubadour, 8: Hexer
+        /// Portrait Main ID (Texture Class ID?)
         /// </summary>
-        public int Class;
-
-        /// <summary>
-        /// Texture Main ID (class id?)
-        /// </summary>
-        public int TexMainId;
+        public int TexMainId { get; set; }
 
         public EO1Character() { }
 
         public EO1Character(BinaryReader input)
         {
             Resist = new RESIST_DATA(input);
-            for (int i = 0; i < 4; i++)
-                Equipment[i] = input.ReadInt32();
+            Equipment = new EQUIP(input);
             Natural_Param = new ABIL_DATA(input);
             Fortify_Param = new ABIL_DATA(input);
             HP = input.ReadInt32();
             TP = input.ReadInt32();
             Exp = input.ReadUInt32();
-            Name = input.ReadChars(18); // Just read every even index to get the name
+            Name = input.ReadChars(18);
             input.ReadBytes(2); // Skip terminator for Name
             BadStatusFg = input.ReadInt32();
             Level = input.ReadInt32();
             Boost = input.ReadInt32();
             TexNum = input.ReadInt32();
-            JijikaBit = input.ReadInt32();
+            JijikuBit = input.ReadInt32();
             SP = input.ReadInt32();
             for (int i = 0; i < 21; i++)
                 SkillLevel[i] = input.ReadInt32();
@@ -223,21 +264,13 @@ namespace EO_Bank
             Skill_Param = new ABIL_DATA(input);
             RegisterIndex = input.ReadInt32();
             IsFemale = input.ReadInt32();
-            Class = input.ReadInt32();
-            TexMainId = input.ReadInt32(); // unknown value, but NOT EMPTY like the other gaps that are ignored
+            Class = input.ReadInt32(); // 0: Landsknecht, 1: Survivalist, 2: Protector, 3: Dark Hunter, 4: Ronin, 5: Medic, 6: Alchemist, 7: Troubadour, 8: Hexer
+            TexMainId = input.ReadInt32();
         }
 
-        public string PrintName()
-        {
-            char[] realname = new char[8];
-            for (int i = 0; i < 8; i++)
-            {
-                realname[i] = Name[i * 2];
-            }
-            return new string(realname).Replace("\0", "");
-        }
+        public override string GetName() { return new string(this.Name).Replace("\0", ""); }
 
-        public string ClassName()
+        public override string GetClass()
         {
             return Class switch
             {
@@ -257,29 +290,49 @@ namespace EO_Bank
 
     public class EO2Character : Character
     {
-        /// <summary>
-        /// eo2 job list here
-        /// </summary>
-        public int Job;
+        public override int Class { get; set; }
+        public override int Level { get; set; }
+        public override uint Exp { get; set; }
+
+        public EO2Character() { }
+
+        public EO2Character(BinaryReader input)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override string GetName()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override string GetClass()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class EO3Character : Character
     {
-        /// <summary>
-        /// eo3 job list here
-        /// </summary>
-        public int Job;
-        public byte[] list;
-        public int Exp;
+        public override int Class { get; set; }
+        public override int Level { get; set; }
+        public override uint Exp { get; set; }
 
         public EO3Character() { }
 
         public EO3Character(BinaryReader input)
         {
-            // Name is 18 bytes, with '00' after every character
-            //Job = input.ReadInt32();
-            list = new byte[218];
-            list = input.ReadBytes(218);
+            throw new System.NotImplementedException();
+        }
+
+        public override string GetName()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override string GetClass()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

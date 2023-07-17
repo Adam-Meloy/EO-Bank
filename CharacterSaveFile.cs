@@ -7,7 +7,7 @@ namespace EO_Bank
     /// Base class for character saves. Includes common code, as well as values that are consistent
     /// across every game.
     /// </summary>
-    public class CharacterSaveFile
+    public abstract class CharacterSaveFile
     {
         /// <summary>
         /// The decrypted bytes of the provided input file.
@@ -20,19 +20,13 @@ namespace EO_Bank
         /// For loading character saves, which are decrypted copies of normal character save data
         /// </summary>
         /// <param name="path">The path to the character save file.</param>
-        public CharacterSaveFile(string path)
-        {
-            Data = File.ReadAllBytes(path);
-        }
+        public CharacterSaveFile(string path) { Data = File.ReadAllBytes(path); }
 
         /// <summary>
         /// Copies the character data, and writes it to the given path.
         /// </summary>
         /// <param name="path">Where to write the character save to.</param>
-        public virtual void WriteCharacterSave(string path, Character Character, SaveFile SaveFile)
-        {
-            File.WriteAllBytes(path, Data);
-        }
+        public virtual void WriteCharacterSave(string path, Character Character, SaveFile SaveFile) { File.WriteAllBytes(path, Data); }
     }
 
     public class EO1CharacterSave : CharacterSaveFile
@@ -65,12 +59,7 @@ namespace EO_Bank
         private void ReadGuildName(BinaryReader input)
         {
             char[] name = input.ReadChars(16);
-            char[] realname = new char[8];
-            for (int i = 0; i < 8; i++)
-            {
-                realname[i] = name[i * 2];
-            }
-            GuildName = new string(realname);
+            GuildName = new string(name).Replace("\0", "");
         }
 
         public override void WriteCharacterSave(string path, Character Character, SaveFile SaveFile)

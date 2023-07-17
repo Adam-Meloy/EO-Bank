@@ -10,7 +10,7 @@ namespace EO_Bank
     /// Base class for saves. Includes common encryption/decryption/IO code, as well as values that are consistent
     /// across every game.
     /// </summary>
-    public class SaveFile
+    public abstract class SaveFile
     {
         // AES configuration values.
         private static readonly string Key = "Atlus-inc-SQS3SE";
@@ -34,6 +34,16 @@ namespace EO_Bank
         /// </summary>
         public byte[] WorkData;
 
+        /// <summary>
+        /// Character data.
+        /// </summary>
+        public abstract Character[] Characters { get; set; }
+
+        /// <summary>
+        /// The guild's name.
+        /// </summary>
+        public string GuildName { get; set; } = "";
+
         public SaveFile() { }
 
         /// <summary>
@@ -56,6 +66,15 @@ namespace EO_Bank
         {
             var encrypted = EncryptSave(WorkData);
             File.WriteAllBytes(path, encrypted);
+        }
+
+        /// <summary>
+        /// Writes Data to the given path.
+        /// </summary>
+        /// <param name="path">Where to write the decrypted save to.</param>
+        public virtual void WriteDecryptedSave(string path)
+        {
+            File.WriteAllBytes(path, Data);
         }
 
         private byte[] DecryptSave(byte[] encrypted)
@@ -82,20 +101,12 @@ namespace EO_Bank
 
     public class EO1SaveFile : SaveFile
     {
-        /// <summary>
-        /// Character data.
-        /// </summary>
-        public EO1Character[] Characters { get; } = new EO1Character[30];
+        public override Character[] Characters { get; set; } = new EO1Character[30];
 
         /// <summary>
         /// The guild's name without processing.
         /// </summary>
         public char[] RawGuildName { get; set; } = new char[16];
-
-        /// <summary>
-        /// The guild's name.
-        /// </summary>
-        public string GuildName { get; set; } = "";
 
         public EO1SaveFile() { }
 
@@ -120,12 +131,7 @@ namespace EO_Bank
             // There is some distance between last character and guild name
             input.BaseStream.Position = 0x23F8;
             RawGuildName = input.ReadChars(16);
-            char[] realname = new char[8];
-            for (int i = 0; i < 8; i++)
-            {
-                realname[i] = RawGuildName[i * 2];
-            }
-            GuildName = new string(realname);
+            GuildName = new string(RawGuildName).Replace("\0", "");
         }
 
         public override void WriteEncryptedSave(string path)
@@ -168,7 +174,7 @@ namespace EO_Bank
 
     public class EO2SaveFile : SaveFile
     {
-
+        public override Character[] Characters { get; set; } = new EO2Character[30];
     }
 
     public class EO3SaveFile : SaveFile
@@ -203,9 +209,7 @@ namespace EO_Bank
         /// <summary>
         /// When this save file was written. Stored as milliseconds since the Unix epoch.
         /// </summary>
-#pragma warning disable IDE0052 // Remove unread private members
         private long SaveTime { get; set; }
-#pragma warning restore IDE0052 // Remove unread private members
 
         /// <summary>
         /// How long this save file has been played, store as milliseconds.
@@ -231,7 +235,7 @@ namespace EO_Bank
         /// <summary>
         /// Character data.
         /// </summary>
-        public EO3Character[] Characters { get; } = new EO3Character[30];
+        public override Character[] Characters { get; set; } = new EO3Character[30];
 
         /// <summary>
         /// The preset parties that you can call up all at once from the Explorers Guild. Arrays of character IDs, sorted
@@ -249,11 +253,6 @@ namespace EO_Bank
         /// How much money the player has accumulated over the entire game.
         /// </summary>
         public int LifetimeEntal { get; set; }
-
-        /// <summary>
-        /// The guild's name.
-        /// </summary>
-        public string GuildName { get; set; } = "";
 
         /// <summary>
         /// The ship's name.
@@ -409,7 +408,7 @@ namespace EO_Bank
 
         public override void WriteEncryptedSave(string path)
         {
-            UpdateWorkData();
+            //UpdateWorkData();
             WorkData = File.ReadAllBytes("C:/Users/Asteras/Download/EO3SaveFile.bin");
             base.WriteEncryptedSave(path);
         }
@@ -444,17 +443,6 @@ namespace EO_Bank
             }
             // "Draw the rest of the owl" I mean write the rest of the file, part 1.
             writer.Write(reader.ReadBytes(0x3668));
-            /*var resultingByte = 0;
-            for (int flagIndexBuffer = 1; flagIndexBuffer < SeaItemFlags.Length + 1; flagIndexBuffer += 1)
-            {
-                var flagIndex = (flagIndexBuffer - 1) % 8;
-                resultingByte |= 1 << flagIndex;
-                if (flagIndexBuffer % 8 == 0)
-                {
-                    writer.Write((byte)resultingByte);
-                    resultingByte = 0;
-                }
-            }*/
             reader.ReadBytes(0x60);
             // "Draw the rest of the owl" I mean write the rest of the file, part 2.
             writer.Write(reader.ReadBytes(0x42618));
