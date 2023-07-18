@@ -5,7 +5,6 @@
 /// Availability: ?
 
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -197,7 +196,7 @@ namespace EO_Bank
         {
             for (var i = 0; i < Characters.Length; i += 1)
             {
-                input.BaseStream.Position = 0x94 + (i * 0x13C); // this position is almost certainly wrong, will be changed
+                input.BaseStream.Position = 0x94 + (i * 0x13C);
                 Characters[i] = new EO2Character(input);
             }
         }
@@ -368,11 +367,11 @@ namespace EO_Bank
         public EO3SaveFile(string path) : base(path)
         {
             using var input = new BinaryReader(new MemoryStream(Data));
-            ReadSaveHeader(input);
+            //ReadSaveHeader(input);
             //ReadPartyDataHeader(input);
             ReadCharacterData(input);
             //ReadPresetParties(input);
-            //ReadMoneyAndNamePartyData(input);
+            ReadMoneyAndNamePartyData(input);
             //ReadInventories(input);
             //ReadShopData(input);
             //ReadSeaItemBitfields(input);
@@ -389,7 +388,7 @@ namespace EO_Bank
             NewGamePlus = input.ReadInt32() == 1;
         }
 
-        /*private void ReadPartyDataHeader(BinaryReader input)
+        private void ReadPartyDataHeader(BinaryReader input)
         {
             input.ReadInt32(); // E_DIR_TYPE.
             input.ReadSByte(); // NowFloor. Seems to be set to 30d when I've saved at the inn?
@@ -398,7 +397,7 @@ namespace EO_Bank
             input.ReadSByte(); // NowHour.
             input.ReadSByte(); // NowMin.
             input.ReadInt32(); // NowDay.
-        }*/
+        }
 
         private void ReadCharacterData(BinaryReader input)
         {
@@ -411,7 +410,7 @@ namespace EO_Bank
             input.BaseStream.Position = 0x2010;
         }
 
-        /*private void ReadPresetParties(BinaryReader input)
+        private void ReadPresetParties(BinaryReader input)
         {
             for (var presetParty = 0; presetParty < PresetParties.Length; presetParty += 1)
             {
@@ -422,17 +421,18 @@ namespace EO_Bank
                     party[character] = input.ReadInt32();
                 }
             }
-        }*/
+        }
 
-        /*private void ReadMoneyAndNamePartyData(BinaryReader input)
+        private void ReadMoneyAndNamePartyData(BinaryReader input)
         {
             Ental = input.ReadInt32();
             LifetimeEntal = input.ReadInt32();
-            GuildName = Util.GetUtf8StringFromSaveData(input, 0x18);
-            ShipName = Util.GetUtf8StringFromSaveData(input, 0x18);
-            input.ReadBytes(4); // ColTypes for Floor and SeaFloor, and coords. Shouldn't mess with these.
-            input.ReadInt32(); // Another E_DIR_TYPE.
-        }*/
+            GuildName = new string(input.ReadChars(16)).Replace("\0", "");
+            input.ReadBytes(2);
+            //ShipName = Util.GetUtf8StringFromSaveData(input, 0x18);
+            //input.ReadBytes(4); // ColTypes for Floor and SeaFloor, and coords. Shouldn't mess with these.
+            //input.ReadInt32(); // Another E_DIR_TYPE.
+        }
 
         /*private void ReadInventories(BinaryReader input)
         {

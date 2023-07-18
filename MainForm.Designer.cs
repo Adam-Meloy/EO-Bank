@@ -46,7 +46,9 @@ namespace EO_Bank
             CharacterStatusStrip = new ToolStripMenuItem();
             CreateSaveDialog = new SaveFileDialog();
             LoadSaveDialog = new OpenFileDialog();
-            ImportCharDialog = new OpenFileDialog();
+            ImportEO1CharDialog = new OpenFileDialog();
+            ImportEO2CharDialog = new OpenFileDialog();
+            ImportEO3CharDialog = new OpenFileDialog();
             ExportCharDialog = new SaveFileDialog();
             CreateDecryptedSaveDialog = new SaveFileDialog();
             CharacterPanel = new Panel();
@@ -146,10 +148,20 @@ namespace EO_Bank
             LoadSaveDialog.InitialDirectory = "%appdata%/SEGA";
             LoadSaveDialog.Title = "Load Save";
             // 
-            // ImportCharDialog
+            // ImportEO1CharDialog
             // 
-            ImportCharDialog.Filter = "EO1 Character File (*.eo1char)|*.eo1char";
-            ImportCharDialog.Title = "Import Character";
+            ImportEO1CharDialog.Filter = "EO1 Character File (*.eo1char)|*.eo1char";
+            ImportEO1CharDialog.Title = "Import EO1 Character";
+            // 
+            // ImportEO2CharDialog
+            // 
+            ImportEO2CharDialog.Filter = "EO2 Character File (*.eo2char)|*.eo2char";
+            ImportEO2CharDialog.Title = "Import EO2 Character";
+            // 
+            // ImportEO3CharDialog
+            // 
+            ImportEO3CharDialog.Filter = "EO3 Character File (*.eo3char)|*.eo3char";
+            ImportEO3CharDialog.Title = "Import EO3 Character";
             // 
             // ExportCharDialog
             // 
@@ -202,7 +214,9 @@ namespace EO_Bank
         private ToolStripMenuItem ExitStrip;
         private SaveFileDialog CreateSaveDialog;
         private OpenFileDialog LoadSaveDialog;
-        private OpenFileDialog ImportCharDialog;
+        private OpenFileDialog ImportEO1CharDialog;
+        private OpenFileDialog ImportEO2CharDialog;
+        private OpenFileDialog ImportEO3CharDialog;
         private SaveFileDialog ExportCharDialog;
         private ToolStripMenuItem CreateDecryptedSaveStrip;
         private SaveFileDialog CreateDecryptedSaveDialog;

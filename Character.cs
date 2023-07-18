@@ -1,31 +1,9 @@
 ﻿using System.IO;
+using System.Security.Cryptography;
 
 namespace EO_Bank
 {
     public abstract class Character
-    {
-        // Require further investigation before putting shared variables here
-
-        /// <summary>Name</summary>
-        public abstract char[] Name { get; set; }
-        /// <summary>Class</summary>
-        public abstract int Class { get; set; }
-
-        /// <summary>Level</summary>
-        public abstract int Level { get; set; }
-
-        /// <summary>Experience</summary>
-        public abstract uint EXP { get; set; }
-
-        public Character() { }
-
-        /// <summary>Get a string version of the Character's Name</summary>
-        public abstract string GetName();
-        /// <summary>Get a string version of the Character's Class</summary>
-        public abstract string GetClass();
-    }
-
-    public class EO1Character : Character
     {
         /// <summary>Stats</summary>
         /// <remarks>Max HP, Max TP, STR, VIT, AGI, LUC, TEC</remarks>
@@ -60,6 +38,52 @@ namespace EO_Bank
             }
         }
 
+        /// <summary>Equipment</summary>
+        public struct EQUIP_DATA
+        {
+            /// <summary>Equipped Weapon</summary>
+            public int Weapon;
+            /// <summary>Equipped Armor in the first slot</summary>
+            public int Armor_1;
+            /// <summary>Equipped Armor in the second slot</summary>
+            public int Armor_2;
+            /// <summary>Equipped Armor in the third slot</summary>
+            public int Armor_3;
+
+            public EQUIP_DATA() { }
+
+            public EQUIP_DATA(BinaryReader input)
+            {
+                Weapon = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+                Armor_1 = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+                Armor_2 = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+                Armor_3 = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            }
+        }
+
+
+
+        /// <summary>Name</summary>
+        public abstract char[] Name { get; set; }
+        /// <summary>Class</summary>
+        public abstract int Class { get; set; }
+
+        /// <summary>Level</summary>
+        public abstract int Level { get; set; }
+
+        /// <summary>Experience</summary>
+        public abstract uint EXP { get; set; }
+
+        public Character() { }
+
+        /// <summary>Get a string version of the Character's Name</summary>
+        public abstract string GetName();
+        /// <summary>Get a string version of the Character's Class</summary>
+        public abstract string GetClass();
+    }
+
+    public class EO1Character : Character
+    {
         /// <summary>Element Resist Values</summary>
         public struct RESIST_DATA
         {
@@ -90,29 +114,6 @@ namespace EO_Bank
                 Head = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
                 Arm = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
                 Leg = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-            }
-        }
-
-        /// <summary>Equipment</summary>
-        public struct EQUIP_DATA
-        {
-            /// <summary>Equipped Weapon</summary>
-            public int Weapon;
-            /// <summary>Equipped Armor in the first slot</summary>
-            public int Armor_1;
-            /// <summary>Equipped Armor in the second slot</summary>
-            public int Armor_2;
-            /// <summary>Equipped Armor in the third slot</summary>
-            public int Armor_3;
-
-            public EQUIP_DATA() { }
-
-            public EQUIP_DATA(BinaryReader input)
-            {
-                Weapon = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Armor_1 = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Armor_2 = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Armor_3 = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
             }
         }
 
@@ -225,62 +226,6 @@ namespace EO_Bank
 
     public class EO2Character : Character // PreviousSaveData is EO1Character
     {
-        /// <summary>Stats</summary>
-        /// <remarks>Max HP, Max TP, STR, VIT, AGI, LUC, TEC</remarks>
-        public struct ABIL_DATA
-        {
-            /// <summary>Max HP</summary>
-            public int HpMax;
-            /// <summary>Max TP</summary>
-            public int TpMax;
-            /// <summary>Strength (STR)</summary>
-            public int Str;
-            /// <summary>Vitality (VIT)</summary>
-            public int Vit;
-            /// <summary>Agility (AGI)</summary>
-            public int Agi;
-            /// <summary>Luck (LUC)</summary>
-            public int Luc;
-            /// <summary>Technique (TEC)</summary>
-            public int Tec;
-
-            public ABIL_DATA() { }
-
-            public ABIL_DATA(BinaryReader input)
-            {
-                HpMax = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                TpMax = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Str = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Vit = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Agi = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Luc = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Tec = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-            }
-        }
-
-        /// <summary>Equipment</summary>
-        public struct EQUIP_DATA
-        {
-            /// <summary>Equipped Weapon</summary>
-            public int Weapon;
-            /// <summary>Equipped Armor in the first slot</summary>
-            public int Armor_1;
-            /// <summary>Equipped Armor in the second slot</summary>
-            public int Armor_2;
-            /// <summary>Equipped Armor in the third slot</summary>
-            public int Armor_3;
-
-            public EQUIP_DATA() { }
-
-            public EQUIP_DATA(BinaryReader input)
-            {
-                Weapon = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Armor_1 = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Armor_2 = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Armor_3 = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-            }
-        }
-
         /// <summary>List of Bad Statuses</summary>
         public enum BadStatusFlag
         {
@@ -365,7 +310,7 @@ namespace EO_Bank
                 SkillLevel[i] = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
             CharacterNumber = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
             RegisterIndex = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-            IsFemale = EndianBitConverter.ToBoolean(input.ReadBytes(4), 0).Equals(0) ? false : true;
+            IsFemale = !EndianBitConverter.ToBoolean(input.ReadBytes(4), 0).Equals(0);
             TexMainId = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
         }
 
@@ -396,10 +341,128 @@ namespace EO_Bank
 
     public class EO3Character : Character
     {
-        public override char[] Name { get; set; }
+        /// <summary>Stats</summary>
+        /// <remarks>Max HP, Max TP, STR, VIT, AGI, LUC, TEC, pad</remarks>
+        new public struct ABIL_DATA
+        {
+            /// <summary>Max HP</summary>
+            public int HpMax;
+            /// <summary>Max TP</summary>
+            public int TpMax;
+            /// <summary>Strength (STR)</summary>
+            public short Str;
+            /// <summary>Vitality (VIT)</summary>
+            public short Vit;
+            /// <summary>Agility (AGI)</summary>
+            public short Agi;
+            /// <summary>Luck (LUC)</summary>
+            public short Luc;
+            /// <summary>Technique (TEC)</summary>
+            public short Tec;
+            /// <summary>Padding</summary>
+            public short pad;
+
+            public ABIL_DATA() { }
+
+            public ABIL_DATA(BinaryReader input)
+            {
+                HpMax = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+                TpMax = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+                Str = EndianBitConverter.Little.ToInt16(input.ReadBytes(2), 0);
+                Vit = EndianBitConverter.Little.ToInt16(input.ReadBytes(2), 0);
+                Agi = EndianBitConverter.Little.ToInt16(input.ReadBytes(2), 0);
+                Luc = EndianBitConverter.Little.ToInt16(input.ReadBytes(2), 0);
+                Tec = EndianBitConverter.Little.ToInt16(input.ReadBytes(2), 0);
+                pad = EndianBitConverter.Little.ToInt16(input.ReadBytes(2), 0);
+            }
+        }
+
+        /// <summary>Stats</summary>
+        /// <remarks>STR, VIT, AGI, LUC, TEC, pad0, pad1, pad2</remarks>
+        public struct HOUTEN_COUNT
+        {
+            /// <summary>Strength (STR)</summary>
+            public byte Str;
+            /// <summary>Vitality (VIT)</summary>
+            public byte Vit;
+            /// <summary>Agility (AGI)</summary>
+            public byte Agi;
+            /// <summary>Luck (LUC)</summary>
+            public byte Luc;
+            /// <summary>Technique (TEC)</summary>
+            public byte Tec;
+            /// <summary>Padding</summary>
+            public byte pad0;
+            /// <summary>Padding</summary>
+            public byte pad1;
+            /// <summary>Padding</summary>
+            public byte pad2;
+
+            public HOUTEN_COUNT() { }
+
+            public HOUTEN_COUNT(BinaryReader input)
+            {
+                Str = input.ReadByte();
+                Vit = input.ReadByte();
+                Agi = input.ReadByte();
+                Luc = input.ReadByte();
+                Tec = input.ReadByte();
+                pad0 = input.ReadByte();
+                pad1 = input.ReadByte();
+                pad2 = input.ReadByte();
+            }
+        }
+
+        /// <summary>Equipment</summary>
+        new public struct  EQUIP_DATA
+        {
+            
+        }
+
+        /// <summary>Items</summary>
+        public struct ITEM_DATA
+        {
+
+        }
+
+
+        public byte Flag; // 0x10
+        public byte TexNum; // 0x11
+        public byte RegisterIndex; // 0x12
+        public override int Level { get; set; } // originally byte
         public override int Class { get; set; }
-        public override int Level { get; set; }
+        public int SubClass { get; set; } // originally byte
+        public int TexMainId; // 0x1C
+        public EQUIP_DATA Equip; // 0x20
+        public ABIL_DATA Inherit_Ability; // 0x28
+        public ABIL_DATA Natural_Ability; // 0x30
+        public ABIL_DATA Skill_Ability; // 0x38
+        public ABIL_DATA Fortify_Ability; // 0x40
+        public ABIL_DATA Battle_Ability; // 0x48
+        public short Hp; // 0x50
+        public short Tp; // 0x52
         public override uint EXP { get; set; }
+        public override char[] Name { get; set; } // originally string
+        public ushort BadStatusFg; // 0x60
+        public byte MaxLevel; // 0x62
+        public sbyte Boost; // 0x63
+        public byte SkillPointLeft; // 0x64
+        public byte OriginalCharDataIndex; // 0x65
+        public byte[] CommonSkillLevel; // 0x68
+        public byte[,] SkillLevel; // 0x70
+        public short LimitSkillID; // 0x78
+        public byte Order; // 0x7A
+        public byte InheritSkillPoint; // 0x7B
+        public short NPCNo; // 0x7C
+        public byte AIPassNo; // 0x7E
+        public byte BkOrder; // 0x7F
+        public short BkLimitSkillID; // 0x80
+        public HOUTEN_COUNT HoutenCount; // 0x88
+        public sbyte CoopMemberIndex; // 0x90
+        public byte IsFamale; // 0x91
+        public byte[] resv; // 0x98
+        public ulong ConstantId; // 0xA0
+
 
         public EO3Character() { }
 

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace EO_Bank
 {
@@ -21,10 +22,12 @@ namespace EO_Bank
                 Data = File.ReadAllBytes(path);
                 using var input = new BinaryReader(new MemoryStream(Data));
                 short CheckGame = EndianBitConverter.Little.ToInt16(input.ReadBytes(2), 0);
-                if (CheckGame != game)
+
+                if (CheckGame != game) // Make sure game is correct
                     throw new InvalidDataException();
 
                 GuildName = input.ReadChars(16);
+
                 Character = game switch
                 {
                     1 => new EO1Character(input),
@@ -32,18 +35,21 @@ namespace EO_Bank
                     3 => new EO3Character(input),
                     _ => throw new InvalidDataException()
                 };
+
+                if (Data.Length > input.BaseStream.Position) // EOChar files have no extra space
+                    throw new InvalidDataException();
             }
             catch { throw new InvalidDataException("Invalid file has been provided."); }
-            
-            
         }
 
         /// <summary>For creating character saves, which are decrypted copies of normal character save data</summary
         /// <param name="path">Where to write the character save to.</param>
         /// <param name="character">The character to be saved.</param>
         /// <param name="guildname">The name of the character's guild.</param>
-        public CharacterSaveFile(string path, Character character, char[] guildname, short game)
+        public CharacterSaveFile(string path, Character character, string guildname, short game)
         {
+            throw new NotImplementedException();
+
             // convert game to bytes and write it as a short
             // read guildname as bytes and write it
             // convert character to bytes and write it
