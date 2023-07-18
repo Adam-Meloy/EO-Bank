@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
@@ -6,10 +7,8 @@ namespace EO_Bank
 {
     public partial class MainForm : Form
     {
-        int Game = 0; // 1: EO1, 2: EO2, 3: EO3
-        /// <summary>
-        /// Save File
-        /// </summary>
+        short Game = 0; // 1: EO1, 2: EO2, 3: EO3
+        /// <summary>Save File</summary>
         public SaveFile SaveFile;
 
         public MainForm() { InitializeComponent(); }
@@ -33,37 +32,35 @@ namespace EO_Bank
         // Load Save
         private void LoadSaveStrip_Click(object sender, EventArgs e)
         {
-            // i have no idea how to decrypt a save bro
             if (loadSaveDialog.ShowDialog() == DialogResult.OK)
             {
                 DetermineSaveGame(loadSaveDialog.FileName);
                 switch (Game)
                 {
-                    case 0:
-                    default:
-                        MessageBox.Show("The file is not a valid EO save or was renamed. Exiting program.");
-                        Application.Exit();
-                        break;
                     case 1:
                         try
                         { SaveFile = new EO1SaveFile(loadSaveDialog.FileName); }
-                        catch (CryptographicException)
-                        {
-                            MessageBox.Show("The file was invalid, decrypted, or named incorrectly. Exiting program.");
-                            Application.Exit();
-                        }
+                        catch
+                        { throw new CryptographicException("The file was not a valid EO1HD save."); }
                         break;
                     case 2:
-                        //SaveFile = new EO2SaveFile(loadSaveDialog.FileName);
-                        // TODO: Implement EO2 Save Reading
+                        try
+                        { SaveFile = new EO2SaveFile(loadSaveDialog.FileName); }
+                        catch
+                        { throw new CryptographicException("The file was not a valid EO2HD save."); }
                         break;
                     case 3:
-                        //SaveFile = new EO3SaveFile(loadSaveDialog.FileName);
-                        // TODO: Implement EO3 Save Reading
-                        break;
+                    //  try
+                    //  { SaveFile = new EO3SaveFile(loadSaveDialog.FileName); }
+                    //  catch
+                    //  { throw new CryptographicException("The file was not a valid EO2HD save."); }
+                    //  TODO: Implement EO3 Save Reading
+                    break;
+                    default:
+                        throw new InvalidDataException("The file is not a valid EO1HD, EO2HD, or EO3HD save.");
                 }
 
-                MessageBox.Show($"Welcome, {SaveFile.GuildName}");
+                // MessageBox.Show($"Welcome, {SaveFile.GuildName}!");
 
                 createSaveStrip.Enabled = true;
                 createDecryptedSaveStrip.Enabled = true;
@@ -81,13 +78,12 @@ namespace EO_Bank
 
         private void ExportCharStrip_Click(object sender, EventArgs e)
         {
-            // Character file will be decrypted bin files with guild name at the end.
-            MessageBox.Show("Hello! This doesn't actually do anything yet.");
+            throw new NotImplementedException();
 
-            // commented out to prevent shenanigans
+            // commented out to prevent anything from happening
             //if (exportCharDialog.ShowDialog() == DialogResult.OK)
             //{
-            //    EO1CharacterSave EO1CharacterSave = new();
+            //    CharacterSaveFile CharacterSave = new(exportCharDialog.FileName, SaveFile.Characters[0], SaveFile.GuildName, Game);
             //}
         }
 
@@ -103,9 +99,8 @@ namespace EO_Bank
                     string selectedGuildName = new string(import.GuildName).Replace("\0", "");
                     switch (Game)
                     {
-                        default:
                         case 1:
-                            MessageBox.Show($"Welcome, { ((EO1Character)selectedCharacter).GetName()} from Guild {selectedGuildName}!");
+                            MessageBox.Show($"Welcome, {((EO1Character)selectedCharacter).GetName()} from Guild {selectedGuildName}!");
                             break;
                         case 2:
                             MessageBox.Show($"Welcome, {((EO2Character)selectedCharacter).GetName()} from Guild {selectedGuildName}!");
@@ -113,16 +108,18 @@ namespace EO_Bank
                         case 3:
                             MessageBox.Show($"Welcome, {((EO3Character)selectedCharacter).GetName()} from Guild {selectedGuildName}!");
                             break;
+                        default:
+                            throw new InvalidDataException("You did not provide a valid EO1Char, EO2Char, or EO3Char file.");
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    MessageBox.Show("You broke me. Here's how you did it: " + e);
+                    MessageBox.Show("You broke me. Here's what happened: " + ex);
                 }
             }
         }
 
-        // Show Character Status
+        // Show Character Status (Debug Tool)
         private void CharStatus_Click(object sender, EventArgs e)
         {
             MessageBox.Show(
@@ -136,7 +133,7 @@ namespace EO_Bank
         // Settings
         private void Settings_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Hello! This doesn't actually do anything yet.");
+            throw new NotImplementedException();
         }
 
         // Exit Program
@@ -144,9 +141,7 @@ namespace EO_Bank
 
         private void Menu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) { }
 
-        /// <Summary>
-        /// determine what game the save is from
-        /// </Summary>
+        /// <Summary>Determine what Game the Save is from</Summary>
         public void DetermineSaveGame(string FileName)
         {
             if (FileName.Contains("EOHD_game"))
@@ -155,6 +150,12 @@ namespace EO_Bank
                 Game = 2;
             else if (FileName.Contains("EO3HD_game"))
                 Game = 3;
+            else
+            {
+                // This is peak exception handling right here.
+                MessageBox.Show("System.IO.InvalidDataException: Invalid file provided.");
+                throw new InvalidDataException("Invalid file provided.");
+            }
         }
     }
 }

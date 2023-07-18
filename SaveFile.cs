@@ -1,15 +1,17 @@
-﻿using System.IO;
+﻿/// Title: SaveFile, EO3SaveFile
+/// Author: Rea
+/// Date: 2023
+/// Code version: 1
+/// Availability: ?
+
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace EO_Bank
 {
-    // Thank you Rea for the file. Discord: rea
 
-    /// <summary>
-    /// Base class for saves. Includes common encryption/decryption/IO code, as well as values that are consistent
-    /// across every game.
-    /// </summary>
+    /// <summary>Base class for saves. Includes common encryption/decryption/IO code, as well as values that are consistent across every game.</summary>
     public abstract class SaveFile
     {
         // AES configuration values.
@@ -21,7 +23,6 @@ namespace EO_Bank
         /// <summary>
         /// The AES object for handling encryption and decryption of saves.
         /// </summary>
-        /// <returns></returns>
         private readonly Aes Aes;
 
         /// <summary>
@@ -34,14 +35,10 @@ namespace EO_Bank
         /// </summary>
         public byte[] WorkData;
 
-        /// <summary>
-        /// Character data.
-        /// </summary>
+        /// <summary>Character data.</summary>
         public abstract Character[] Characters { get; set; }
 
-        /// <summary>
-        /// The guild's name.
-        /// </summary>
+        /// <summary>The guild's name.</summary>
         public string GuildName { get; set; } = "";
 
         public SaveFile() { }
@@ -101,11 +98,10 @@ namespace EO_Bank
 
     public class EO1SaveFile : SaveFile
     {
+        /// <summary>The characters from the save file.</summary>
         public override Character[] Characters { get; set; } = new EO1Character[30];
 
-        /// <summary>
-        /// The guild's name without processing.
-        /// </summary>
+        /// <summary>The guild's name as read from the decrypted save file.</summary>
         public char[] RawGuildName { get; set; } = new char[16];
 
         public EO1SaveFile() { }
@@ -136,8 +132,8 @@ namespace EO_Bank
 
         public override void WriteEncryptedSave(string path)
         {
-            UpdateWorkData();
-            WorkData = File.ReadAllBytes("C:/Users/Asteras/Downloads/UhOh.bin");
+            //UpdateWorkData();
+            //WorkData = File.ReadAllBytes("C:/Users/Asteras/Downloads/EO1UhOh.bin");
             base.WriteEncryptedSave(path);
         }
 
@@ -168,13 +164,80 @@ namespace EO_Bank
             writer.Write(reader.ReadBytes(0x10));
             // "Draw the rest of the owl" I mean write the rest of the file.
             writer.Write(reader.ReadBytes(0x486EE));
-            File.WriteAllBytes("C:/Users/Asteras/Downloads/UhOh.bin", WorkData);
+            File.WriteAllBytes("C:/Users/Asteras/Downloads/EO1UhOh.bin", WorkData);
         }
     }
 
     public class EO2SaveFile : SaveFile
     {
+        /// <summary>The characters from the save file.</summary>
         public override Character[] Characters { get; set; } = new EO2Character[30];
+
+        /// <summary>The guild's name as read from the decrypted save file.</summary>
+        public char[] RawGuildName { get; set; } = new char[16];
+
+        public EO2SaveFile() { }
+
+        public EO2SaveFile(string path) : base(path)
+        {
+            //using var input = new BinaryReader(new MemoryStream(Data));
+            //ReadCharacterData(input);
+            //ReadGuildName(input);
+        }
+
+        private void ReadCharacterData(BinaryReader input)
+        {
+            for (var i = 0; i < Characters.Length; i += 1)
+            {
+                input.BaseStream.Position = 0x1C + (i * 0x130);
+                Characters[i] = new EO2Character(input);
+            }
+        }
+
+        private void ReadGuildName(BinaryReader input)
+        {
+            // There is some distance between last character and guild name
+            input.BaseStream.Position = 0x23F8; // this position is almost certainly wrong, will be changed
+            RawGuildName = input.ReadChars(16);
+            GuildName = new string(RawGuildName).Replace("\0", "");
+        }
+
+        public override void WriteEncryptedSave(string path)
+        {
+            //UpdateWorkData();
+            //WorkData = File.ReadAllBytes("C:/Users/Asteras/Downloads/EO2UhOh.bin");
+            base.WriteEncryptedSave(path);
+        }
+
+        /// <summary>
+        /// Syncs the bytes representing each character in the work buffer with each current character.
+        /// </summary>
+        private void UpdateWorkData()
+        {
+            using var reader = new BinaryReader(new MemoryStream(Data));
+            using var writer = new BinaryWriter(new MemoryStream(WorkData));
+            // Write the header.
+            writer.Write(reader.ReadBytes(0x1C)); // this position is almost certainly wrong, will be changed
+            // Write characters.
+            for (int i = 0; i < Characters.Length; i += 1)
+            {
+                var character = Characters[i];
+                // Write the pre-EXP bytes.
+                writer.Write(reader.ReadBytes(0x7C)); // this position is almost certainly wrong, will be changed
+                // EXP.
+                reader.ReadUInt32();
+                writer.Write(character.Exp);
+                // Write the post-EXP bytes.
+                writer.Write(reader.ReadBytes(0xB0)); // this position is almost certainly wrong, will be changed
+            }
+            //Write the data between characters and guild name.
+            writer.Write(reader.ReadBytes(0x1F)); // this position is almost certainly wrong, will be changed
+            //Write the guild name.
+            writer.Write(reader.ReadBytes(0x10)); // this position is almost certainly wrong, will be changed
+            // "Draw the rest of the owl" I mean write the rest of the file.
+            writer.Write(reader.ReadBytes(0x486EE)); // this position is almost certainly wrong, will be changed
+            File.WriteAllBytes("C:/Users/Asteras/Downloads/EO2UhOh.bin", WorkData);
+        }
     }
 
     public class EO3SaveFile : SaveFile
