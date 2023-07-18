@@ -15,65 +15,61 @@ namespace EO_Bank
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            characterStrip.Enabled = false;
-            createDecryptedSaveStrip.Enabled = false;
-            createSaveStrip.Enabled = false;
+            CharacterStrip.Enabled = false;
+            CreateDecryptedSaveStrip.Enabled = false;
+            CreateSaveStrip.Enabled = false;
         }
 
         // Create Save
         private void CreateSaveStrip_Click(object sender, EventArgs e)
         {
-            if (createSaveDialog.ShowDialog() == DialogResult.OK)
-            {
-                SaveFile.WriteEncryptedSave(createSaveDialog.FileName);
-            }
+            if (CreateSaveDialog.ShowDialog() == DialogResult.OK)
+                SaveFile.WriteEncryptedSave(CreateSaveDialog.FileName);
         }
 
         // Load Save
         private void LoadSaveStrip_Click(object sender, EventArgs e)
         {
-            if (loadSaveDialog.ShowDialog() == DialogResult.OK)
+            if (LoadSaveDialog.ShowDialog() == DialogResult.OK)
             {
-                DetermineSaveGame(loadSaveDialog.FileName);
+                DetermineSaveGame(LoadSaveDialog.FileName);
                 switch (Game)
                 {
                     case 1:
                         try
-                        { SaveFile = new EO1SaveFile(loadSaveDialog.FileName); }
+                        { SaveFile = new EO1SaveFile(LoadSaveDialog.FileName); }
                         catch
                         { throw new CryptographicException("The file was not a valid EO1HD save."); }
                         break;
                     case 2:
                         try
-                        { SaveFile = new EO2SaveFile(loadSaveDialog.FileName); }
+                        { SaveFile = new EO2SaveFile(LoadSaveDialog.FileName); }
                         catch
                         { throw new CryptographicException("The file was not a valid EO2HD save."); }
                         break;
                     case 3:
-                    //  try
-                    //  { SaveFile = new EO3SaveFile(loadSaveDialog.FileName); }
-                    //  catch
-                    //  { throw new CryptographicException("The file was not a valid EO2HD save."); }
-                    //  TODO: Implement EO3 Save Reading
-                    break;
+                        //  try
+                        //  { SaveFile = new EO3SaveFile(loadSaveDialog.FileName); }
+                        //  catch
+                        //  { throw new CryptographicException("The file was not a valid EO2HD save."); }
+                        //  TODO: Implement EO3 Save Reading
+                        break;
                     default:
                         throw new InvalidDataException("The file is not a valid EO1HD, EO2HD, or EO3HD save.");
                 }
 
-                // MessageBox.Show($"Welcome, {SaveFile.GuildName}!");
+                MessageBox.Show($"Welcome, {SaveFile.GuildName}!");
 
-                createSaveStrip.Enabled = true;
-                createDecryptedSaveStrip.Enabled = true;
-                characterStrip.Enabled = true;
+                CreateSaveStrip.Enabled = true;
+                CreateDecryptedSaveStrip.Enabled = true;
+                CharacterStrip.Enabled = true;
             }
         }
 
         private void CreateDecryptedSaveStrip_Click(object sender, EventArgs e)
         {
-            if (createDecryptedSaveDialog.ShowDialog() == DialogResult.OK)
-            {
-                SaveFile.WriteDecryptedSave(createDecryptedSaveDialog.FileName);
-            }
+            if (CreateDecryptedSaveDialog.ShowDialog() == DialogResult.OK)
+                SaveFile.WriteDecryptedSave(CreateDecryptedSaveDialog.FileName);
         }
 
         private void ExportCharStrip_Click(object sender, EventArgs e)
@@ -90,11 +86,11 @@ namespace EO_Bank
         // Import Character
         private void ImportCharStrip_Click(object sender, EventArgs e)
         {
-            if (importCharDialog.ShowDialog() == DialogResult.OK)
+            if (ImportCharDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    CharacterSaveFile import = new(importCharDialog.FileName, Game);
+                    CharacterSaveFile import = new(ImportCharDialog.FileName, Game);
                     Character selectedCharacter = import.Character;
                     string selectedGuildName = new string(import.GuildName).Replace("\0", "");
                     switch (Game)
@@ -113,21 +109,8 @@ namespace EO_Bank
                     }
                 }
                 catch (Exception ex)
-                {
-                    MessageBox.Show("You broke me. Here's what happened: " + ex);
-                }
+                { MessageBox.Show("You broke me. Here's what happened: " + ex); }
             }
-        }
-
-        // Show Character Status (Debug Tool)
-        private void CharStatus_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show(
-                $"{SaveFile.Characters[0].GetName()}\n" +
-                $"Job: {SaveFile.Characters[0].GetClass()}\n" +
-                $"Level: {SaveFile.Characters[0].Level}\n" +
-                $"Exp: {SaveFile.Characters[0].Exp}"
-            );
         }
 
         // Settings
@@ -139,16 +122,14 @@ namespace EO_Bank
         // Exit Program
         private void Exit_Click(object sender, EventArgs e) { Application.Exit(); }
 
-        private void Menu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) { }
-
         /// <Summary>Determine what Game the Save is from</Summary>
         public void DetermineSaveGame(string FileName)
         {
-            if (FileName.Contains("EOHD_game"))
+            if (FileName.Contains("EOHD_game", StringComparison.CurrentCultureIgnoreCase))
                 Game = 1;
-            else if (FileName.Contains("EO2HD_game"))
+            else if (FileName.Contains("EO2HD_game", StringComparison.CurrentCultureIgnoreCase))
                 Game = 2;
-            else if (FileName.Contains("EO3HD_game"))
+            else if (FileName.Contains("EO3HD_game", StringComparison.CurrentCultureIgnoreCase))
                 Game = 3;
             else
             {
@@ -156,6 +137,17 @@ namespace EO_Bank
                 MessageBox.Show("System.IO.InvalidDataException: Invalid file provided.");
                 throw new InvalidDataException("Invalid file provided.");
             }
+        }
+
+        // Show Character Status (Debug Tool)
+        private void CharacterStatus_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(
+                $"{SaveFile.Characters[0].GetName()}\n" +
+                $"Job: {SaveFile.Characters[0].GetClass()}\n" +
+                $"Level: {SaveFile.Characters[0].Level}\n" +
+                $"Exp: {SaveFile.Characters[0].EXP}"
+            );
         }
     }
 }

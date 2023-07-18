@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Windows.Forms;
 
 namespace EO_Bank
 {
@@ -16,7 +15,7 @@ namespace EO_Bank
         public abstract int Level { get; set; }
 
         /// <summary>Experience</summary>
-        public abstract uint Exp { get; set; }
+        public abstract uint EXP { get; set; }
 
         public Character() { }
 
@@ -146,7 +145,7 @@ namespace EO_Bank
         public int HP { get; set; }
         /// <summary>Current TP</summary>
         public int TP { get; set; }
-        public override uint Exp { get; set; }
+        public override uint EXP { get; set; }
         public override char[] Name { get; set; }
         /// <summary>Bad Status Effect</summary>
         public BadStatusFlag BadStatusFg { get; set; }
@@ -163,7 +162,7 @@ namespace EO_Bank
         public int[] SkillLevel { get; set; } = new int[21];
         /// <summary>Character Number (0-29)</summary>
         public int CharacterNumber { get; set; }
-        /// <summary>Character Base Stats + Skills</summary>
+        /// <summary>Base Stats + Skills</summary>
         private ABIL_DATA Skill_Param; // Re-calculated by game, will not be touched
         /// <summary>Slot Number (0-29)</summary>
         public int RegisterIndex { get; set; }
@@ -185,7 +184,7 @@ namespace EO_Bank
             Fortify_Param = new ABIL_DATA(input);
             HP = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
             TP = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-            Exp = EndianBitConverter.Little.ToUInt32(input.ReadBytes(4), 0);
+            EXP = EndianBitConverter.Little.ToUInt32(input.ReadBytes(4), 0);
             Name = input.ReadChars(18);
             input.ReadBytes(2); // Skip terminator for Name
             BadStatusFg = (BadStatusFlag)EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
@@ -194,7 +193,7 @@ namespace EO_Bank
             TexNum = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
             JijikuBit = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
             SP = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-            for (int i = 0; i < 21; i++)
+            for (int i = 0; i < SkillLevel.Length; i++)
                 SkillLevel[i] = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
             CharacterNumber = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
             Skill_Param = new ABIL_DATA(input);
@@ -224,7 +223,7 @@ namespace EO_Bank
         }
     }
 
-    public class EO2Character : Character
+    public class EO2Character : Character // PreviousSaveData is EO1Character
     {
         /// <summary>Stats</summary>
         /// <remarks>Max HP, Max TP, STR, VIT, AGI, LUC, TEC</remarks>
@@ -256,39 +255,6 @@ namespace EO_Bank
                 Agi = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
                 Luc = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
                 Tec = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-            }
-        }
-
-        /// <summary>Element Resist Values</summary>
-        public struct RESIST_DATA
-        {
-            public int Slash;
-            public int Shock;
-            public int Thrust;
-            public int Fire;
-            public int Ice;
-            public int Thunder;
-            public int Death;
-            public int Mind;
-            public int Head;
-            public int Arm;
-            public int Leg;
-
-            public RESIST_DATA() { }
-
-            public RESIST_DATA(BinaryReader input)
-            {
-                Slash = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Shock = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Thrust = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Fire = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Ice = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Thunder = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Death = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Mind = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Head = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Arm = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
-                Leg = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
             }
         }
 
@@ -332,27 +298,45 @@ namespace EO_Bank
             BAD_STATUS_FG_LEG = 2048
         }
 
-        /// <remarks>0: Landsknecht, 1: Survivalist, 2: Protector, 3: Dark Hunter, 4: Ronin, 5: Medic, 6: Alchemist, 7: Troubadour, 8: Hexer , 9: Gunner, 10: War Magus, 11: Beast, 12: BARD100</remarks>
+        /// <summary>Class</summary>
+        /// <remarks>0: Landsknecht, 1: Survivalist, 2: Protector, 3: Dark Hunter, 4: Ronin, 5: Medic, 6: Alchemist, 7: Troubadour, 8: Hexer , 9: Gunner, 10: War Magus, 11: Beast, 12: BARD100, 14: DLC </remarks>
         public override int Class { get; set; }
-        public EQUIP_DATA Equip;
-        public ABIL_DATA inherit_param;
-        public ABIL_DATA natural_param;
-        public ABIL_DATA skill_param;
-        public ABIL_DATA fortify_param;
+        /// <summary>List of Equipment</summary>
+        public EQUIP_DATA Equipment;
+        /// <summary>Unclear. Either Base Stats + Inherit Bonus, or Inherit Bonus</summary>
+        public ABIL_DATA Inherit_Param;
+        /// <summary>Base Stats</summary>
+        public ABIL_DATA Natural_Param;
+        /// <summary>Base Stats + Skills</summary>
+        public ABIL_DATA Skill_Param;
+        /// <summary>Base Stats + Skills + Equipment</summary>
+        public ABIL_DATA Fortify_Param;
+        /// <summary>Current Max Level</summary>
         public int MaxLevel;
-        public int Hp;
-        public int Tp;
-        public override uint Exp { get; set; }
+        /// <summary>Current HP</summary>
+        public int HP;
+        /// <summary>Current TP</summary>
+        public int TP;
+        public override uint EXP { get; set; }
         public override char[] Name { get; set; }
+        /// <summary>Bad Status Effect</summary>
         public BadStatusFlag BadStatusFg;
         public override int Level { get; set; }
+        /// <summary>Boost</summary>
         public int Boost;
+        /// <summary>Portrait Number</summary>
         public int TexNum;
-        public int SkillPoint;
-        public int[] SkillLevel;
-        public int char_no;
+        /// <summary>Skill Points</summary>
+        public int SP { get; set; }
+        /// <summary>Skill Levels</summary>
+        public int[] SkillLevel { get; set; } = new int[28];
+        /// <summary>Character Number (0-29)</summary>
+        public int CharacterNumber;
+        /// <summary>Slot Number (0-29)</summary>
         public int RegisterIndex;
+        /// <summary>Female Portrait Flag</summary>
         public bool IsFemale;
+        /// <summary>Portrait Main ID (Texture Class ID)</summary>
         public int TexMainId;
 
 
@@ -360,17 +344,53 @@ namespace EO_Bank
 
         public EO2Character(BinaryReader input)
         {
-            throw new System.NotImplementedException();
+            Class = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            Equipment = new EQUIP_DATA(input);
+            Inherit_Param = new ABIL_DATA(input);
+            Natural_Param = new ABIL_DATA(input);
+            Skill_Param = new ABIL_DATA(input);
+            Fortify_Param = new ABIL_DATA(input);
+            MaxLevel = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            HP = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            TP = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            EXP = EndianBitConverter.Little.ToUInt32(input.ReadBytes(4), 0);
+            Name = input.ReadChars(18);
+            input.ReadBytes(2); // Skip terminator for Name
+            BadStatusFg = (BadStatusFlag)EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            Level = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            Boost = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            TexNum = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            SP = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            for (int i = 0; i < SkillLevel.Length; i++)
+                SkillLevel[i] = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            CharacterNumber = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            RegisterIndex = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
+            IsFemale = EndianBitConverter.ToBoolean(input.ReadBytes(4), 0).Equals(0) ? false : true;
+            TexMainId = EndianBitConverter.Little.ToInt32(input.ReadBytes(4), 0);
         }
 
-        public override string GetName()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override string GetName() { return new string(this.Name).Replace("\0", ""); }
 
         public override string GetClass()
         {
-            throw new System.NotImplementedException();
+            return Class switch
+            {
+                0 => "Landsknecht",
+                1 => "Survivalist",
+                2 => "Protector",
+                3 => "Dark Hunter",
+                4 => "Ronin",
+                5 => "Medic",
+                6 => "Alchemist",
+                7 => "Troubadour",
+                8 => "Hexer",
+                9 => "Gunner",
+                10 => "War Magus",
+                11 => "Beast",
+                12 => "BARD100", // Unsure what this actually is
+                14 => "DLC", // Unsure what this actually is
+                _ => "Landsknecht"
+            };
         }
     }
 
@@ -379,7 +399,7 @@ namespace EO_Bank
         public override char[] Name { get; set; }
         public override int Class { get; set; }
         public override int Level { get; set; }
-        public override uint Exp { get; set; }
+        public override uint EXP { get; set; }
 
         public EO3Character() { }
 

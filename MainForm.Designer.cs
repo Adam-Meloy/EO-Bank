@@ -33,172 +33,181 @@ namespace EO_Bank
         private void InitializeComponent()
         {
             ComponentResourceManager resources = new ComponentResourceManager(typeof(MainForm));
-            menuStrip = new MenuStrip();
-            fileStrip = new ToolStripMenuItem();
-            loadSaveStrip = new ToolStripMenuItem();
-            createSaveStrip = new ToolStripMenuItem();
-            createDecryptedSaveStrip = new ToolStripMenuItem();
-            settingsStrip = new ToolStripMenuItem();
-            exitStrip = new ToolStripMenuItem();
-            characterStrip = new ToolStripMenuItem();
-            charStatusStrip = new ToolStripMenuItem();
-            exportCharStrip = new ToolStripMenuItem();
-            importCharStrip = new ToolStripMenuItem();
-            createSaveDialog = new SaveFileDialog();
-            loadSaveDialog = new OpenFileDialog();
-            importCharDialog = new OpenFileDialog();
-            exportCharDialog = new SaveFileDialog();
-            createDecryptedSaveDialog = new SaveFileDialog();
-            menuStrip.SuspendLayout();
+            MenuStrip = new MenuStrip();
+            FileStrip = new ToolStripMenuItem();
+            LoadSaveStrip = new ToolStripMenuItem();
+            CreateSaveStrip = new ToolStripMenuItem();
+            CreateDecryptedSaveStrip = new ToolStripMenuItem();
+            SettingsStrip = new ToolStripMenuItem();
+            ExitStrip = new ToolStripMenuItem();
+            CharacterStrip = new ToolStripMenuItem();
+            ExportCharStrip = new ToolStripMenuItem();
+            ImportCharStrip = new ToolStripMenuItem();
+            CharacterStatusStrip = new ToolStripMenuItem();
+            CreateSaveDialog = new SaveFileDialog();
+            LoadSaveDialog = new OpenFileDialog();
+            ImportCharDialog = new OpenFileDialog();
+            ExportCharDialog = new SaveFileDialog();
+            CreateDecryptedSaveDialog = new SaveFileDialog();
+            CharacterPanel = new Panel();
+            MenuStrip.SuspendLayout();
             SuspendLayout();
             // 
-            // menuStrip
+            // MenuStrip
             // 
-            menuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            menuStrip.Items.AddRange(new ToolStripItem[] { fileStrip, characterStrip });
-            menuStrip.Location = new System.Drawing.Point(0, 0);
-            menuStrip.Name = "menuStrip";
-            menuStrip.Padding = new Padding(5, 2, 0, 2);
-            menuStrip.Size = new System.Drawing.Size(700, 24);
-            menuStrip.TabIndex = 0;
-            menuStrip.Text = "Menu";
-            menuStrip.ItemClicked += Menu_ItemClicked;
+            MenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            MenuStrip.Items.AddRange(new ToolStripItem[] { FileStrip, CharacterStrip, CharacterStatusStrip });
+            MenuStrip.Location = new System.Drawing.Point(0, 0);
+            MenuStrip.Name = "MenuStrip";
+            MenuStrip.Padding = new Padding(5, 2, 0, 2);
+            MenuStrip.Size = new System.Drawing.Size(984, 24);
+            MenuStrip.TabIndex = 0;
+            MenuStrip.Text = "Menu";
             // 
-            // fileStrip
+            // FileStrip
             // 
-            fileStrip.DropDownItems.AddRange(new ToolStripItem[] { loadSaveStrip, createSaveStrip, createDecryptedSaveStrip, settingsStrip, exitStrip });
-            fileStrip.Name = "fileStrip";
-            fileStrip.Size = new System.Drawing.Size(37, 20);
-            fileStrip.Text = "File";
+            FileStrip.DropDownItems.AddRange(new ToolStripItem[] { LoadSaveStrip, CreateSaveStrip, CreateDecryptedSaveStrip, SettingsStrip, ExitStrip });
+            FileStrip.Name = "FileStrip";
+            FileStrip.Size = new System.Drawing.Size(37, 20);
+            FileStrip.Text = "File";
             // 
-            // loadSaveStrip
+            // LoadSaveStrip
             // 
-            loadSaveStrip.Name = "loadSaveStrip";
-            loadSaveStrip.Size = new System.Drawing.Size(192, 22);
-            loadSaveStrip.Text = "Load Save";
-            loadSaveStrip.Click += LoadSaveStrip_Click;
+            LoadSaveStrip.Name = "LoadSaveStrip";
+            LoadSaveStrip.Size = new System.Drawing.Size(192, 22);
+            LoadSaveStrip.Text = "Load Save";
+            LoadSaveStrip.Click += LoadSaveStrip_Click;
             // 
-            // createSaveStrip
+            // CreateSaveStrip
             // 
-            createSaveStrip.Name = "createSaveStrip";
-            createSaveStrip.Size = new System.Drawing.Size(192, 22);
-            createSaveStrip.Text = "Create Save";
-            createSaveStrip.Click += CreateSaveStrip_Click;
+            CreateSaveStrip.Name = "CreateSaveStrip";
+            CreateSaveStrip.Size = new System.Drawing.Size(192, 22);
+            CreateSaveStrip.Text = "Create Save";
+            CreateSaveStrip.Click += CreateSaveStrip_Click;
             // 
-            // createDecryptedSaveStrip
+            // CreateDecryptedSaveStrip
             // 
-            createDecryptedSaveStrip.Name = "createDecryptedSaveStrip";
-            createDecryptedSaveStrip.Size = new System.Drawing.Size(192, 22);
-            createDecryptedSaveStrip.Text = "Create Decrypted Save";
-            createDecryptedSaveStrip.Click += CreateDecryptedSaveStrip_Click;
+            CreateDecryptedSaveStrip.Name = "CreateDecryptedSaveStrip";
+            CreateDecryptedSaveStrip.Size = new System.Drawing.Size(192, 22);
+            CreateDecryptedSaveStrip.Text = "Create Decrypted Save";
+            CreateDecryptedSaveStrip.Click += CreateDecryptedSaveStrip_Click;
             // 
-            // settingsStrip
+            // SettingsStrip
             // 
-            settingsStrip.Name = "settingsStrip";
-            settingsStrip.Size = new System.Drawing.Size(192, 22);
-            settingsStrip.Text = "Settings";
-            settingsStrip.Click += Settings_Click;
+            SettingsStrip.Name = "SettingsStrip";
+            SettingsStrip.Size = new System.Drawing.Size(192, 22);
+            SettingsStrip.Text = "Settings";
+            SettingsStrip.Click += Settings_Click;
             // 
-            // exitStrip
+            // ExitStrip
             // 
-            exitStrip.Name = "exitStrip";
-            exitStrip.Size = new System.Drawing.Size(192, 22);
-            exitStrip.Text = "Exit";
-            exitStrip.Click += Exit_Click;
+            ExitStrip.Name = "ExitStrip";
+            ExitStrip.Size = new System.Drawing.Size(192, 22);
+            ExitStrip.Text = "Exit";
+            ExitStrip.Click += Exit_Click;
             // 
-            // characterStrip
+            // CharacterStrip
             // 
-            characterStrip.DropDownItems.AddRange(new ToolStripItem[] { charStatusStrip, exportCharStrip, importCharStrip });
-            characterStrip.Name = "characterStrip";
-            characterStrip.Size = new System.Drawing.Size(70, 20);
-            characterStrip.Text = "Character";
+            CharacterStrip.DropDownItems.AddRange(new ToolStripItem[] { ExportCharStrip, ImportCharStrip });
+            CharacterStrip.Name = "CharacterStrip";
+            CharacterStrip.Size = new System.Drawing.Size(70, 20);
+            CharacterStrip.Text = "Character";
             // 
-            // charStatusStrip
+            // ExportCharStrip
             // 
-            charStatusStrip.Name = "charStatusStrip";
-            charStatusStrip.Size = new System.Drawing.Size(164, 22);
-            charStatusStrip.Text = "Character Status";
-            charStatusStrip.Click += CharStatus_Click;
+            ExportCharStrip.Name = "ExportCharStrip";
+            ExportCharStrip.Size = new System.Drawing.Size(164, 22);
+            ExportCharStrip.Text = "Export Character";
+            ExportCharStrip.Click += ExportCharStrip_Click;
             // 
-            // exportCharStrip
+            // ImportCharStrip
             // 
-            exportCharStrip.Name = "exportCharStrip";
-            exportCharStrip.Size = new System.Drawing.Size(164, 22);
-            exportCharStrip.Text = "Export Character";
-            exportCharStrip.Click += ExportCharStrip_Click;
+            ImportCharStrip.Name = "ImportCharStrip";
+            ImportCharStrip.Size = new System.Drawing.Size(164, 22);
+            ImportCharStrip.Text = "Import Character";
+            ImportCharStrip.Click += ImportCharStrip_Click;
             // 
-            // importCharStrip
+            // CharacterStatusStrip
             // 
-            importCharStrip.Name = "importCharStrip";
-            importCharStrip.Size = new System.Drawing.Size(164, 22);
-            importCharStrip.Text = "Import Character";
-            importCharStrip.Click += ImportCharStrip_Click;
+            CharacterStatusStrip.Name = "CharacterStatusStrip";
+            CharacterStatusStrip.Size = new System.Drawing.Size(105, 20);
+            CharacterStatusStrip.Text = "Character Status";
+            CharacterStatusStrip.Click += CharacterStatus_Click;
             // 
-            // createSaveDialog
+            // CreateSaveDialog
             // 
-            createSaveDialog.CreatePrompt = true;
-            createSaveDialog.Filter = "BIN File (*.bin)|*.bin";
-            createSaveDialog.InitialDirectory = "%appdata%/SEGA/EOHD";
+            CreateSaveDialog.CreatePrompt = true;
+            CreateSaveDialog.Filter = "BIN File (*.bin)|*.bin";
+            CreateSaveDialog.InitialDirectory = "%appdata%/SEGA/EOHD";
             // 
-            // loadSaveDialog
+            // LoadSaveDialog
             // 
-            loadSaveDialog.Filter = "BIN File (*.bin)|*.bin";
-            loadSaveDialog.InitialDirectory = "%appdata%/SEGA";
-            loadSaveDialog.Title = "Load Save";
+            LoadSaveDialog.Filter = "BIN File (*.bin)|*.bin";
+            LoadSaveDialog.InitialDirectory = "%appdata%/SEGA";
+            LoadSaveDialog.Title = "Load Save";
             // 
-            // importCharDialog
+            // ImportCharDialog
             // 
-            importCharDialog.Filter = "EO1 Character File (*.eo1char)|*.eo1char";
-            importCharDialog.Title = "Import Character";
+            ImportCharDialog.Filter = "EO1 Character File (*.eo1char)|*.eo1char";
+            ImportCharDialog.Title = "Import Character";
             // 
-            // exportCharDialog
+            // ExportCharDialog
             // 
-            exportCharDialog.CreatePrompt = true;
-            exportCharDialog.Filter = "EO1 Character File (*.eo1char)|*.eo1char";
-            exportCharDialog.Title = "Export Character";
+            ExportCharDialog.CreatePrompt = true;
+            ExportCharDialog.Filter = "EO1 Character File (*.eo1char)|*.eo1char";
+            ExportCharDialog.Title = "Export Character";
             // 
-            // createDecryptedSaveDialog
+            // CreateDecryptedSaveDialog
             // 
-            createDecryptedSaveDialog.CreatePrompt = true;
-            createDecryptedSaveDialog.Filter = "BIN File (*.bin)|*.bin";
-            createDecryptedSaveDialog.InitialDirectory = "%appdata%/SEGA/EOHD";
+            CreateDecryptedSaveDialog.CreatePrompt = true;
+            CreateDecryptedSaveDialog.Filter = "BIN File (*.bin)|*.bin";
+            CreateDecryptedSaveDialog.InitialDirectory = "%appdata%/SEGA/EOHD";
+            // 
+            // CharacterPanel
+            // 
+            CharacterPanel.Location = new System.Drawing.Point(367, 27);
+            CharacterPanel.Name = "CharacterPanel";
+            CharacterPanel.Size = new System.Drawing.Size(605, 672);
+            CharacterPanel.TabIndex = 1;
             // 
             // MainForm
             // 
             AllowDrop = true;
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(700, 422);
-            Controls.Add(menuStrip);
+            ClientSize = new System.Drawing.Size(984, 711);
+            Controls.Add(CharacterPanel);
+            Controls.Add(MenuStrip);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
-            MainMenuStrip = menuStrip;
+            MainMenuStrip = MenuStrip;
             Name = "MainForm";
             Text = "EO Bank";
             Load += Form1_Load;
-            menuStrip.ResumeLayout(false);
-            menuStrip.PerformLayout();
+            MenuStrip.ResumeLayout(false);
+            MenuStrip.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private MenuStrip menuStrip;
-        private ToolStripMenuItem fileStrip;
-        private ToolStripMenuItem loadSaveStrip;
-        private ToolStripMenuItem createSaveStrip;
-        private ToolStripMenuItem characterStrip;
-        private ToolStripMenuItem charStatusStrip;
-        private ToolStripMenuItem exportCharStrip;
-        private ToolStripMenuItem importCharStrip;
-        private ToolStripMenuItem settingsStrip;
-        private ToolStripMenuItem exitStrip;
-        private SaveFileDialog createSaveDialog;
-        private OpenFileDialog loadSaveDialog;
-        private OpenFileDialog importCharDialog;
-        private SaveFileDialog exportCharDialog;
-        private ToolStripMenuItem createDecryptedSaveStrip;
-        private SaveFileDialog createDecryptedSaveDialog;
+        private MenuStrip MenuStrip;
+        private ToolStripMenuItem FileStrip;
+        private ToolStripMenuItem LoadSaveStrip;
+        private ToolStripMenuItem CreateSaveStrip;
+        private ToolStripMenuItem CharacterStrip;
+        private ToolStripMenuItem ExportCharStrip;
+        private ToolStripMenuItem ImportCharStrip;
+        private ToolStripMenuItem SettingsStrip;
+        private ToolStripMenuItem ExitStrip;
+        private SaveFileDialog CreateSaveDialog;
+        private OpenFileDialog LoadSaveDialog;
+        private OpenFileDialog ImportCharDialog;
+        private SaveFileDialog ExportCharDialog;
+        private ToolStripMenuItem CreateDecryptedSaveStrip;
+        private SaveFileDialog CreateDecryptedSaveDialog;
+        private Panel CharacterPanel;
+        private ToolStripMenuItem CharacterStatusStrip;
     }
 }
 

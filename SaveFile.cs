@@ -5,6 +5,7 @@
 /// Availability: ?
 
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -111,6 +112,7 @@ namespace EO_Bank
             using var input = new BinaryReader(new MemoryStream(Data));
             ReadCharacterData(input);
             ReadGuildName(input);
+            ReadClassUnlocked(input);
         }
 
         private void ReadCharacterData(BinaryReader input)
@@ -130,41 +132,47 @@ namespace EO_Bank
             GuildName = new string(RawGuildName).Replace("\0", "");
         }
 
+        private void ReadClassUnlocked(BinaryReader input)
+        {
+            // once i find how the game locks classes, that will be read here
+        }
+
         public override void WriteEncryptedSave(string path)
         {
-            //UpdateWorkData();
-            //WorkData = File.ReadAllBytes("C:/Users/Asteras/Downloads/EO1UhOh.bin");
+            UpdateWorkData();
             base.WriteEncryptedSave(path);
         }
 
-        /// <summary>
-        /// Syncs the bytes representing each character in the work buffer with each current character.
-        /// </summary>
+        /// <summary>Syncs the bytes representing each character in the work buffer with each current character.</summary>
         private void UpdateWorkData()
         {
             using var reader = new BinaryReader(new MemoryStream(Data));
             using var writer = new BinaryWriter(new MemoryStream(WorkData));
+
             // Write the header.
             writer.Write(reader.ReadBytes(0x1C));
+
             // Write characters.
             for (int i = 0; i < Characters.Length; i += 1)
             {
                 var character = Characters[i];
                 // Write the pre-EXP bytes.
                 writer.Write(reader.ReadBytes(0x7C));
-                // EXP.
+                // Write the EXP bytes.
                 reader.ReadUInt32();
-                writer.Write(character.Exp);
+                writer.Write(character.EXP);
                 // Write the post-EXP bytes.
                 writer.Write(reader.ReadBytes(0xB0));
             }
+
             //Write the data between characters and guild name.
             writer.Write(reader.ReadBytes(0x1F));
+
             //Write the guild name.
             writer.Write(reader.ReadBytes(0x10));
-            // "Draw the rest of the owl" I mean write the rest of the file.
+
+            // Write the rest of the file.
             writer.Write(reader.ReadBytes(0x486EE));
-            File.WriteAllBytes("C:/Users/Asteras/Downloads/EO1UhOh.bin", WorkData);
         }
     }
 
@@ -180,16 +188,16 @@ namespace EO_Bank
 
         public EO2SaveFile(string path) : base(path)
         {
-            //using var input = new BinaryReader(new MemoryStream(Data));
-            //ReadCharacterData(input);
-            //ReadGuildName(input);
+            using var input = new BinaryReader(new MemoryStream(Data));
+            ReadCharacterData(input);
+            ReadGuildName(input);
         }
 
         private void ReadCharacterData(BinaryReader input)
         {
             for (var i = 0; i < Characters.Length; i += 1)
             {
-                input.BaseStream.Position = 0x1C + (i * 0x130);
+                input.BaseStream.Position = 0x94 + (i * 0x13C); // this position is almost certainly wrong, will be changed
                 Characters[i] = new EO2Character(input);
             }
         }
@@ -197,15 +205,14 @@ namespace EO_Bank
         private void ReadGuildName(BinaryReader input)
         {
             // There is some distance between last character and guild name
-            input.BaseStream.Position = 0x23F8; // this position is almost certainly wrong, will be changed
+            input.BaseStream.Position = 0x2654;
             RawGuildName = input.ReadChars(16);
             GuildName = new string(RawGuildName).Replace("\0", "");
         }
 
         public override void WriteEncryptedSave(string path)
         {
-            //UpdateWorkData();
-            //WorkData = File.ReadAllBytes("C:/Users/Asteras/Downloads/EO2UhOh.bin");
+            UpdateWorkData();
             base.WriteEncryptedSave(path);
         }
 
@@ -216,27 +223,31 @@ namespace EO_Bank
         {
             using var reader = new BinaryReader(new MemoryStream(Data));
             using var writer = new BinaryWriter(new MemoryStream(WorkData));
+
             // Write the header.
-            writer.Write(reader.ReadBytes(0x1C)); // this position is almost certainly wrong, will be changed
+            writer.Write(reader.ReadBytes(0x94)); // this position is almost certainly wrong, will be changed
+
             // Write characters.
             for (int i = 0; i < Characters.Length; i += 1)
             {
                 var character = Characters[i];
                 // Write the pre-EXP bytes.
-                writer.Write(reader.ReadBytes(0x7C)); // this position is almost certainly wrong, will be changed
-                // EXP.
+                writer.Write(reader.ReadBytes(0x90)); // this position is almost certainly wrong, will be changed
+                // Write the EXP bytes.
                 reader.ReadUInt32();
-                writer.Write(character.Exp);
+                writer.Write(character.EXP);
                 // Write the post-EXP bytes.
-                writer.Write(reader.ReadBytes(0xB0)); // this position is almost certainly wrong, will be changed
+                writer.Write(reader.ReadBytes(0xA8)); // this position is almost certainly wrong, will be changed
             }
+
             //Write the data between characters and guild name.
-            writer.Write(reader.ReadBytes(0x1F)); // this position is almost certainly wrong, will be changed
+            writer.Write(reader.ReadBytes(0x2C)); // this position is almost certainly wrong, will be changed
+
             //Write the guild name.
             writer.Write(reader.ReadBytes(0x10)); // this position is almost certainly wrong, will be changed
-            // "Draw the rest of the owl" I mean write the rest of the file.
-            writer.Write(reader.ReadBytes(0x486EE)); // this position is almost certainly wrong, will be changed
-            File.WriteAllBytes("C:/Users/Asteras/Downloads/EO2UhOh.bin", WorkData);
+
+            // Write the rest of the file.
+            writer.Write(reader.ReadBytes(0x5F20C)); // this position is almost certainly wrong, will be changed
         }
     }
 
@@ -471,8 +482,7 @@ namespace EO_Bank
 
         public override void WriteEncryptedSave(string path)
         {
-            //UpdateWorkData();
-            WorkData = File.ReadAllBytes("C:/Users/Asteras/Download/EO3SaveFile.bin");
+            UpdateWorkData();
             base.WriteEncryptedSave(path);
         }
 
@@ -498,9 +508,9 @@ namespace EO_Bank
                 var character = Characters[i];
                 // Write the pre-EXP bytes.
                 writer.Write(reader.ReadBytes(0xAC));
-                // EXP.
+                // Write the EXP bytes.
                 reader.ReadUInt32();
-                writer.Write(character.Exp);
+                writer.Write(character.EXP);
                 // Write the post-EXP bytes.
                 writer.Write(reader.ReadBytes(0x60));
             }
@@ -509,7 +519,6 @@ namespace EO_Bank
             reader.ReadBytes(0x60);
             // "Draw the rest of the owl" I mean write the rest of the file, part 2.
             writer.Write(reader.ReadBytes(0x42618));
-            File.WriteAllBytes("C:/Users/Asteras/Downloads/UhOh.bin", WorkData);
         }
     }
 }
